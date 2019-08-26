@@ -1,9 +1,12 @@
 package co.com.k4soft.sisuco.model;
 
+import co.com.k4soft.sisuco.model.businessexception.RepruebaNotaException;
 import co.com.k4soft.sisuco.model.parametro.TipoNotasEnum;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -22,7 +25,10 @@ public class AsignaturaTest {
     private double notaSeguimiento = 3.5;
     private double notaParcial = 2.8;
     private double notaFinal = 4.2;
+    private double notaMinimaPermitida = 3;
 
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
 
     @Before
@@ -65,7 +71,7 @@ public class AsignaturaTest {
     }
 
     @Test
-    public void getDefinitiva() {
+    public void getDefinitiva() throws RepruebaNotaException {
         double notaEsperada = 3.5;
         TipoNota tipoNota = new TipoNota(TipoNotasEnum.FINAL.getId(),TipoNotasEnum.FINAL.getNombre(),TipoNotasEnum.FINAL.getPorcentaje());
         List<Nota> notas = new ArrayList<>();
@@ -74,8 +80,30 @@ public class AsignaturaTest {
         notas.add(new Nota(tipoNota,notaParcial));
         tipoNota = new TipoNota(TipoNotasEnum.SEGUIMIENTO.getId(),TipoNotasEnum.SEGUIMIENTO.getNombre(),TipoNotasEnum.SEGUIMIENTO.getPorcentaje());
         notas.add(new Nota(tipoNota,notaSeguimiento));
+        asignatura.setNotaMinimaPermitida(notaMinimaPermitida);
         asignatura.setNotas(notas);
         double notaSalida = asignatura.getDefinitiva();
         Assert.assertEquals(notaEsperada,notaSalida,0.5);
     }
+
+    @Test
+    public void getDefinitivaReprobada() throws RepruebaNotaException {
+
+        exception.expect(RepruebaNotaException.class);
+        exception.expectMessage(Mensaje.Asignatura.REPRUEBA_NOTA);
+        notaSeguimiento = 1.5;
+        notaParcial = 1.8;
+        notaFinal = 1.2;
+        TipoNota tipoNota = new TipoNota(TipoNotasEnum.FINAL.getId(),TipoNotasEnum.FINAL.getNombre(),TipoNotasEnum.FINAL.getPorcentaje());
+        List<Nota> notas = new ArrayList<>();
+        notas.add(new Nota(tipoNota,notaFinal));
+        tipoNota = new TipoNota(TipoNotasEnum.PARCIAL.getId(),TipoNotasEnum.PARCIAL.getNombre(),TipoNotasEnum.PARCIAL.getPorcentaje());
+        notas.add(new Nota(tipoNota,notaParcial));
+        tipoNota = new TipoNota(TipoNotasEnum.SEGUIMIENTO.getId(),TipoNotasEnum.SEGUIMIENTO.getNombre(),TipoNotasEnum.SEGUIMIENTO.getPorcentaje());
+        notas.add(new Nota(tipoNota,notaSeguimiento));
+        asignatura.setNotaMinimaPermitida(notaMinimaPermitida);
+        asignatura.setNotas(notas);
+        double notaSalida = asignatura.getDefinitiva();
+    }
+
 }

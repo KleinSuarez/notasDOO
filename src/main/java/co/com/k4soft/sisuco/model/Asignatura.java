@@ -1,5 +1,6 @@
 package co.com.k4soft.sisuco.model;
 
+import co.com.k4soft.sisuco.model.businessexception.RepruebaNotaException;
 import co.com.k4soft.sisuco.model.parametro.TipoNotasEnum;
 
 import java.util.List;
@@ -8,10 +9,15 @@ public class Asignatura {
 
     private String nombre;
     private List<Nota> notas;
+    private double notaMinimaPermitida;
 
 
     public Asignatura(String nombre){
         this.nombre = nombre;
+    }
+
+    public void setNotaMinimaPermitida(double notaMinimaPermitida) {
+        this.notaMinimaPermitida = notaMinimaPermitida;
     }
 
     public void setNotas(List<Nota> notas){
@@ -50,8 +56,15 @@ public class Asignatura {
         return  totalFinal;
     }
 
-    public double getDefinitiva(){
-        return getParcial() +getFinal()+getTotalSeguimiento();
+    public double getDefinitiva() throws RepruebaNotaException {
+
+        double definitiva = getParcial() +getFinal()+getTotalSeguimiento();
+
+        if(definitiva < notaMinimaPermitida){
+            throw new RepruebaNotaException(Mensaje.Asignatura.REPRUEBA_NOTA);
+        }
+
+        return definitiva;
     }
 
 
