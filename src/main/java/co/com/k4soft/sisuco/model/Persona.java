@@ -9,8 +9,8 @@ public class Persona {
 
     @Id
     @GeneratedValue
-    @Column(name="id")
-    private Long id;
+    @Column(name="idpersona")
+    private Long idPersona;
     @Column(name="cedula")
     private String cedula;
     @Column(name="nombre")
@@ -18,12 +18,12 @@ public class Persona {
     @Column(name="apellido")
     private String apellido;
 
-    public Long getId() {
-        return id;
+    public Long getIdPersona() {
+        return idPersona;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setIdPersona(Long idPersona) {
+        this.idPersona = idPersona;
     }
 
     public String getCedula() {
