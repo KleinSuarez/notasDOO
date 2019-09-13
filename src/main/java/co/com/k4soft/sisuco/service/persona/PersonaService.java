@@ -10,4 +10,5 @@ public interface PersonaService {
     List<Persona> findAll();
 
 
+    void insert(Persona persona);
 }

@@ -19,4 +19,9 @@ public class PersonaServiceImpl implements PersonaService {
     public List<Persona> findAll() {
         return personaRepository.findAll();
     }
+
+    @Override
+    public void insert(Persona persona) {
+        personaRepository.save(persona);
+    }
 }
